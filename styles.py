@@ -54,8 +54,18 @@ _BASE_CSS = """
     linear-gradient(180deg, #FBF7EE 0%, #F3ECDC 100%);
 }
 .block-container { padding-top: 1.4rem; max-width: 1200px; }
-h1, h2, h3 { font-family: Georgia, 'Times New Roman', serif; color: #0B1F3A; }
+h1, h2, h3 { font-family: Georgia, 'Times New Roman', serif; color: #0B1F3A !important; }
 hr { border: 0; height: 3px; background: linear-gradient(90deg, transparent, #C9A227, transparent); }
+
+/* ---------- Fix Widget Labels & Radio Buttons ---------- */
+div[data-testid="stWidgetLabel"] label,
+div[data-testid="stWidgetLabel"] p,
+div[data-testid="stRadio"] label,
+div[data-testid="stRadio"] p,
+.stMarkdown p,
+p, span {
+  color: #0B1F3A !important;
+}
 
 /* ---------- Sidebar ---------- */
 [data-testid="stSidebar"] {
@@ -63,126 +73,36 @@ hr { border: 0; height: 3px; background: linear-gradient(90deg, transparent, #C9
   border-right: 4px solid #C9A227;
   box-shadow: 6px 0 18px rgba(11,31,58,.12);
 }
+[data-testid="stSidebar"] label,
+[data-testid="stSidebar"] p,
+[data-testid="stSidebar"] span,
+[data-testid="stSidebar"] h1,
+[data-testid="stSidebar"] h2,
+[data-testid="stSidebar"] h3 {
+  color: #0B1F3A !important;
+}
+
 .brand {
   display: flex; align-items: center; gap: 12px; padding: 14px 16px; margin-bottom: 14px;
-  border-radius: 18px; color: #fff;
+  border-radius: 18px; color: #fff !important;
   background: linear-gradient(135deg, #0B1F3A, #16335C);
   border: 1.5px solid rgba(243,214,117,.65);
   box-shadow: 0 5px 0 #06142A, 0 12px 20px rgba(11,31,58,.30), inset 0 1px 0 rgba(255,255,255,.2);
 }
-.brand-icon {
-  width: 46px; height: 46px; border-radius: 14px; display: flex; align-items: center; justify-content: center;
-  font-size: 26px; background: linear-gradient(145deg, #FFF0B8, #D9A93A);
-  box-shadow: 0 4px 0 #8A6410, inset 0 2px 3px rgba(255,255,255,.7);
+.brand p, .brand span, .brand-name, .brand-tag {
+  color: #fff !important;
 }
-.brand-name { font-family: Georgia, serif; font-weight: 700; font-size: 1.15rem; line-height: 1.1; color: #fff; }
-.brand-tag { font-size: .72rem; letter-spacing: .12em; color: #F3D675; }
-
-/* ---------- Hero banner ---------- */
-.hero {
-  display: flex; align-items: center; justify-content: space-between; gap: 24px;
-  padding: 28px 34px; margin-bottom: 22px; border-radius: 24px; color: #fff;
-  background:
-    radial-gradient(620px 230px at 86% 0%, rgba(243,214,117,.30), transparent 62%),
-    linear-gradient(135deg, #0B1F3A 0%, #16335C 55%, #7A1F2B 135%);
-  border: 2px solid rgba(243,214,117,.55);
-  box-shadow: 0 10px 0 #06142A, 0 26px 42px rgba(11,31,58,.35), inset 0 2px 0 rgba(255,255,255,.18);
-}
-.hero-kicker { letter-spacing: .22em; font-size: .75rem; color: #F3D675; font-weight: 700; }
-.hero-title {
-  font-family: Georgia, 'Times New Roman', serif; font-size: 2.7rem; font-weight: 700; line-height: 1.1;
-  margin: .3rem 0 .5rem; color: #fff;
-  text-shadow: 0 2px 0 #06142A, 0 6px 14px rgba(0,0,0,.45);
-}
-.hero-sub { color: #E6ECF5; font-size: 1.05rem; max-width: 650px; }
-.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
-.chip {
-  padding: 6px 13px; border-radius: 999px; font-size: .82rem; font-weight: 700; color: #0B1F3A;
-  background: linear-gradient(180deg, #FFF3C4, #E6C04F);
-  box-shadow: 0 3px 0 #8A6410, 0 6px 10px rgba(0,0,0,.25);
-}
-.hero-art { flex: 0 0 auto; animation: floaty 5s ease-in-out infinite; }
-@keyframes floaty {
-  0%, 100% { transform: translateY(0) rotate(-1.5deg); }
-  50% { transform: translateY(-8px) rotate(1.5deg); }
-}
-@media (max-width: 760px) {
-  .hero { flex-direction: column; text-align: center; padding: 22px 18px; }
-  .hero-title { font-size: 2rem; }
-  .hero-art svg { width: 120px; height: 120px; }
-  .chips { justify-content: center; }
-}
-
-/* ---------- 3D icon tiles + section headers ---------- */
-.sec-head { display: flex; align-items: center; gap: 16px; margin: 2px 0 14px; }
-.icon3d {
-  width: 66px; height: 66px; flex: 0 0 66px; border-radius: 19px; font-size: 34px;
-  display: flex; align-items: center; justify-content: center;
-  background: linear-gradient(145deg, var(--c1), var(--c2));
-  box-shadow:
-    0 7px 0 rgba(0,0,0,.28), 0 14px 22px rgba(11,31,58,.28),
-    inset 0 2px 3px rgba(255,255,255,.6), inset 0 -5px 7px rgba(0,0,0,.20);
-  transform: perspective(320px) rotateX(10deg) rotateY(-10deg);
-  transition: transform .25s ease;
-}
-.icon3d:hover { transform: perspective(320px) rotateX(0deg) rotateY(0deg) translateY(-3px); }
-.icon3d span { filter: drop-shadow(0 3px 2px rgba(0,0,0,.35)); }
-.sec-title { font-family: Georgia, 'Times New Roman', serif; font-size: 1.7rem; font-weight: 700; color: #0B1F3A; line-height: 1.15; }
-.sec-sub { color: #4A5A70; font-size: .98rem; margin-top: 2px; }
-.result-label {
-  display: inline-block; margin: 12px 0 6px; padding: 5px 14px; border-radius: 999px; font-weight: 700;
-  font-size: .85rem; color: #fff; background: linear-gradient(180deg, #16335C, #0B1F3A);
-  box-shadow: 0 3px 0 #06142A, 0 6px 10px rgba(11,31,58,.25);
-}
-
-/* ---------- Tabs (each stage has its own colour) ---------- */
-div[data-baseweb="tab-list"] { gap: 10px; flex-wrap: wrap; border-bottom: none !important; padding: 6px 4px 18px; }
-div[data-baseweb="tab-highlight"], div[data-baseweb="tab-border"] { display: none !important; }
-div[data-baseweb="tab-list"] button[role="tab"] {
-  height: auto; padding: 10px 16px; background: #fff; border: 2px solid var(--c1, #C9A227); border-radius: 14px;
-  box-shadow: 0 4px 0 var(--c2, #8A6410), 0 9px 14px rgba(11,31,58,.15);
-  transition: transform .12s ease, box-shadow .12s ease;
-}
-div[data-baseweb="tab-list"] button[role="tab"] p { color: var(--c2, #0B1F3A) !important; font-weight: 700; margin: 0; }
-div[data-baseweb="tab-list"] button[role="tab"]:hover { transform: translateY(-2px); }
-div[data-baseweb="tab-list"] button[role="tab"][aria-selected="true"] {
-  background: linear-gradient(180deg, var(--c1), var(--c2)); transform: translateY(3px);
-  box-shadow: 0 1px 0 var(--c2), inset 0 3px 6px rgba(0,0,0,.28);
-}
-div[data-baseweb="tab-list"] button[role="tab"][aria-selected="true"] p { color: #fff !important; }
-
-/* ---------- Pressable 3D buttons ---------- */
-.stButton > button {
-  border: 0; border-radius: 13px; padding: .62rem 1.3rem;
-  background: linear-gradient(180deg, #A02F3F 0%, #6E1B27 100%);
-  box-shadow: 0 5px 0 #4A101A, 0 11px 18px rgba(11,31,58,.28), inset 0 1px 0 rgba(255,255,255,.35);
-  transition: transform .12s ease, box-shadow .12s ease;
-}
-.stButton > button p, .stButton > button span { color: #fff !important; font-weight: 700; margin: 0; }
-.stButton > button:hover { transform: translateY(-2px); box-shadow: 0 7px 0 #4A101A, 0 15px 22px rgba(11,31,58,.30), inset 0 1px 0 rgba(255,255,255,.35); }
-.stButton > button:active { transform: translateY(4px); box-shadow: 0 1px 0 #4A101A, 0 3px 6px rgba(11,31,58,.25), inset 0 2px 4px rgba(0,0,0,.3); }
-[data-testid="stSidebar"] .stButton > button {
-  background: linear-gradient(180deg, #1F4378 0%, #0B1F3A 100%);
-  box-shadow: 0 5px 0 #06142A, 0 11px 18px rgba(11,31,58,.28), inset 0 1px 0 rgba(255,255,255,.3);
-}
-[data-testid="stBaseLinkButton-secondary"], [data-testid="stBaseLinkButton-primary"] {
-  border: 0 !important; border-radius: 13px !important;
-  background: linear-gradient(180deg, #FFF0B8 0%, #E0B13E 100%) !important;
-  box-shadow: 0 5px 0 #8A6410, 0 11px 18px rgba(11,31,58,.25), inset 0 1px 0 rgba(255,255,255,.7) !important;
-}
-[data-testid="stBaseLinkButton-secondary"] p, [data-testid="stBaseLinkButton-primary"] p { color: #0B1F3A !important; font-weight: 700; }
 
 /* ---------- Inputs look pressed-in ---------- */
 [data-baseweb="input"], [data-baseweb="textarea"], [data-baseweb="select"] > div {
   border-radius: 12px !important; background: #fff !important; border: 1.5px solid #D9C98F !important;
   box-shadow: inset 0 2px 6px rgba(11,31,58,.14) !important;
+  color: #0B1F3A !important;
 }
-[data-baseweb="input"]:focus-within, [data-baseweb="textarea"]:focus-within, [data-baseweb="select"] > div:focus-within {
-  border-color: #7A1F2B !important;
-  box-shadow: inset 0 2px 6px rgba(11,31,58,.14), 0 0 0 3px rgba(122,31,43,.18) !important;
+[data-baseweb="input"] input, [data-baseweb="textarea"] textarea {
+  color: #0B1F3A !important;
 }
 """
-
 
 def inject_css() -> str:
     """Returns the <style> block. Show it with st.markdown(..., unsafe_allow_html=True)."""
