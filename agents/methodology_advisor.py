@@ -4,8 +4,8 @@ def get_methodology_advisor_agent(llm=None):
     return Agent(
         role="Legal Methodology & Research Gap Specialist",
         goal=(
-            "Help undergraduate law students choose an appropriate legal research methodology "
-            "(Doctrinal, Empirical/Socio-legal, or Comparative) and guide them paragraph by paragraph "
+            "Help undergraduate students of law, socio-legal studies, political science, international relations and public policy choose an appropriate research methodology "
+            "(for example Doctrinal, Socio-legal/Empirical, Comparative, Case Study, Process Tracing, Discourse Analysis or Quantitative) and guide them paragraph by paragraph "
             "on how to write their methodology section."
         ),
         backstory=(
