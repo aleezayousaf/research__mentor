@@ -155,3 +155,26 @@ def journal_fit_search(topic: str, region: str = "world") -> str:
         "double-blind policy on its own website before submitting."
     )
     return "\n".join(lines) + note
+
+
+@tool("Political Science & International Relations Source Guide")
+def policy_sources_guide(query: str) -> str:
+    """Point to official and open data sources for politics, IR and public policy research.
+
+    Automated search of these sites is not connected. Do not present suggested sources
+    as retrieved results; tell the student to open them and confirm the details.
+    """
+    return (
+        f"No automated search of official sources is configured, so nothing was retrieved. "
+        f"Starting points to check directly (topic: {query}):\n"
+        "- UN documents and resolutions: https://digitallibrary.un.org/\n"
+        "- Treaties and their status: https://treaties.un.org/\n"
+        "- International Court of Justice: https://www.icj-cij.org/\n"
+        "- Pakistan Ministry of Foreign Affairs: https://mofa.gov.pk/\n"
+        "- National Assembly of Pakistan: https://na.gov.pk/\n"
+        "- Election Commission of Pakistan: https://www.ecp.gov.pk/\n"
+        "- Pakistan Bureau of Statistics: https://www.pbs.gov.pk/\n"
+        "- World Bank Open Data: https://data.worldbank.org/\n"
+        "- SIPRI (security, arms and military data): https://www.sipri.org/\n"
+        "- V-Dem (democracy data): https://www.v-dem.net/"
+    )
