@@ -10,29 +10,36 @@ st.set_page_config(page_title="ResearchMentor AI", layout="wide")
 st.markdown(
     """
     <style>
-    /* 1. Sidebar headers, text, and labels automatically adapt to theme */
-    [data-testid="stSidebar"] *, 
-    [data-testid="stSidebar"] label,
-    [data-testid="stSidebar"] p,
-    [data-testid="stSidebar"] span,
-    [data-testid="stSidebar"] h1,
-    [data-testid="stSidebar"] h2,
-    [data-testid="stSidebar"] h3 {
-        color: var(--text-color) !important;
+    /* Default / Light Mode Styling */
+    @media (prefers-color-scheme: light) {
+        [data-testid="stSidebar"] *, 
+        div[data-testid="stWidgetLabel"] label,
+        div[data-testid="stWidgetLabel"] p,
+        button[data-baseweb="tab"] p,
+        div[data-testid="stRadio"] label,
+        div[data-testid="stRadio"] p {
+            color: #0F172A !important; /* Dark navy text */
+        }
     }
 
-    /* 2. Form/Widget labels (Your Name, Discipline, AI Provider, etc.) adapt dynamically */
-    div[data-testid="stWidgetLabel"] p,
-    div[data-testid="stWidgetLabel"] label {
-        color: var(--text-color) !important;
-        font-weight: 600 !important;
-    }
+    /* Explicit Dark Mode Styling */
+    @media (prefers-color-scheme: dark) {
+        /* Force dark background containers to use bright white text */
+        [data-testid="stSidebar"] *, 
+        div[data-testid="stWidgetLabel"] label,
+        div[data-testid="stWidgetLabel"] p,
+        button[data-baseweb="tab"] p,
+        div[data-testid="stRadio"] label,
+        div[data-testid="stRadio"] p {
+            color: #FFFFFF !important; /* Pure white text */
+        }
 
-    /* 3. Navigation tabs and radio button labels adapt dynamically */
-    button[data-baseweb="tab"] p,
-    div[data-testid="stRadio"] label,
-    div[data-testid="stRadio"] div[role="radiogroup"] p {
-        color: var(--text-color) !important;
+        /* Ensure input boxes and cards maintain high contrast */
+        div[data-baseweb="input"] input,
+        div[data-baseweb="select"] div {
+            color: #FFFFFF !important;
+            background-color: #1E293B !important;
+        }
     }
     </style>
     """,
