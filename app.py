@@ -5,11 +5,10 @@ import streamlit as st
 
 # ---------------------------------------------------------------------------
 # Startup check: make sure every project file is in the right folder.
-# This turns a confusing "ModuleNotFoundError" into a clear message.
 # ---------------------------------------------------------------------------
 APP_DIR = Path(__file__).resolve().parent
 if str(APP_DIR) not in sys.path:
-    sys.path.insert(0, str(APP_DIR))  # lets Python find the agents/ and tools/ folders
+    sys.path.insert(0, str(APP_DIR))
 
 REQUIRED_FILES = [
     "config.py",
@@ -50,9 +49,7 @@ if _missing:
     st.code("\n".join(_missing))
     st.markdown(
         "**How to fix it:** open your GitHub repository and check that the main page shows "
-        "the folders `agents` and `tools`, and that each folder contains the `.py` files listed above. "
-        "Re-upload any that are missing, keeping the folder names exactly as written "
-        "(lowercase, no spaces). Then reboot the app."
+        "the folders `agents` and `tools`, and that each folder contains the `.py` files listed above."
     )
     st.stop()
 
@@ -63,7 +60,7 @@ from config import (
     setup_environment,
     test_api_key,
 )
-from crewai import Crew, Process, Task
+from crewai import Crew, Task
 from styles import TAB_LABELS, hero_html, inject_css, section_header, sidebar_brand
 
 # Import All Agents
@@ -117,7 +114,7 @@ def run_crew(agent, task):
     try:
         task.description = f"{discipline_brief()}\n\n{task.description}"
     except Exception:
-        pass  # if the task cannot be edited, run it as is
+        pass
     try:
         with st.spinner("The agent is working. This can take a minute..."):
             crew = Crew(agents=[agent], tasks=[task], verbose=True)
@@ -125,6 +122,7 @@ def run_crew(agent, task):
         st.markdown('<div class="result-label">📜 Mentor\'s response</div>', unsafe_allow_html=True)
         with st.container(border=True):
             st.markdown(result.raw)
+        return result.raw
     except Exception as error:
         text = str(error).lower()
         if "429" in text or "rate limit" in text or "resource_exhausted" in text or "quota" in text:
@@ -139,17 +137,22 @@ def run_crew(agent, task):
             )
         else:
             st.error(f"The workflow could not be completed: {error}")
+        return None
 
 
 # 1. Session State & Student Profile Management
 if "student_profile" not in st.session_state:
     st.session_state["student_profile"] = {
         "name": "",
-        "discipline": "Law",
+        "discipline": "Law (LL.B)",
         "observation": "",
+        "sub_domain": "",
         "research_topic": "",
         "selected_methodology": "Doctrinal Research"
     }
+
+if "stage1_step" not in st.session_state:
+    st.session_state["stage1_step"] = 1
 
 # Sidebar Profile Settings
 with st.sidebar:
@@ -207,10 +210,6 @@ with st.sidebar:
             st.error(f"Could not set up the AI model: {error}")
     else:
         st.warning(f"Please paste a {provider_info['short']} API key to run agents.")
-    st.caption(
-        "Your text is sent to the chosen provider. Free tiers may use it to improve "
-        "their products, so avoid confidential material."
-    )
 
 st.markdown(hero_html(), unsafe_allow_html=True)
 
@@ -255,7 +254,7 @@ METHODS = {
     ],
 }
 
-# 2. Main Navigation Tabs
+# 2. Main Navigation Tabs (Free navigation enabled)
 tab_guidance, tab_p1, tab_p2, tab_p3, tab_p4, tab_p5, tab_p6 = st.tabs(TAB_LABELS)
 
 # -----------------------------------------------------------------------------
@@ -295,34 +294,117 @@ with tab_guidance:
             run_crew(assistant, task)
 
 # -----------------------------------------------------------------------------
-# TAB 1: Observation & Topic Discovery
+# TAB 1: Step-by-Step Observation & Topic Discovery
 # -----------------------------------------------------------------------------
 with tab_p1:
     st.markdown(section_header("p1"), unsafe_allow_html=True)
     
-    observation_input = st.text_area(
-        "What real-world problem or situation did you notice?",
-        placeholder="e.g., Seasonal smog in Lahore causes school closures, but existing environmental regulations are rarely enforced."
+    # Visual Step Tracker
+    st.progress(
+        33 if st.session_state["stage1_step"] == 1 else (66 if st.session_state["stage1_step"] == 2 else 100),
+        text=f"Stage 1 - Step {st.session_state['stage1_step']} of 3"
     )
-    
-    if st.button("Explore Topics & Domains", key="btn_p1"):
-        if not is_configured:
-            st.error("API key missing.")
-        else:
-            st.session_state["student_profile"]["observation"] = observation_input
-            supervisor = get_socratic_supervisor_agent(llm)
-            task = Task(
-                description=(
-                    f"Student Name: {st.session_state['student_profile']['name']}\n"
-                    f"Student Observation: {observation_input}\n"
-                    "Acknowledge the student's real-world observation. Suggest 3 specific sub-domains "
-                    f"they could explore (for example: {TOPIC_EXAMPLES.get(discipline, TOPIC_EXAMPLES['Law (LL.B)'])}). "
-                    "Ask 2 encouraging questions to help them frame a clear research topic."
-                ),
-                expected_output="An encouraging response with 3 sub-domain suggestions and 2 guiding questions.",
-                agent=supervisor
-            )
-            run_crew(supervisor, task)
+
+    # STEP 1: Observation Input
+    if st.session_state["stage1_step"] == 1:
+        st.subheader("Step 1: Share Your Observation")
+        obs_input = st.text_area(
+            "What real-world problem or situation did you notice?",
+            value=st.session_state["student_profile"]["observation"],
+            placeholder="e.g., Seasonal smog in Lahore causes school closures, but existing environmental regulations are rarely enforced."
+        )
+        
+        if st.button("Submit Observation & Explore Domains", key="btn_step1"):
+            if not is_configured:
+                st.error("API key missing.")
+            elif not obs_input.strip():
+                st.warning("Please enter an observation.")
+            else:
+                st.session_state["student_profile"]["observation"] = obs_input
+                supervisor = get_socratic_supervisor_agent(llm)
+                task = Task(
+                    description=(
+                        f"Student Name: {st.session_state['student_profile']['name']}\n"
+                        f"Student Observation: {obs_input}\n"
+                        "Acknowledge the student's real-world observation. Suggest 3 specific sub-domains "
+                        f"they could explore (for example: {TOPIC_EXAMPLES.get(discipline, TOPIC_EXAMPLES['Law (LL.B)'])}). "
+                        "Ask 2 encouraging questions to help them choose or refine their focus area."
+                    ),
+                    expected_output="3 sub-domain suggestions and 2 guiding questions.",
+                    agent=supervisor
+                )
+                output = run_crew(supervisor, task)
+                if output:
+                    st.session_state["stage1_subdomains"] = output
+                    st.session_state["stage1_step"] = 2
+                    st.rerun()
+
+    # STEP 2: Choose Sub-Domain & Narrow Focus (Students can choose supervisor suggestions OR write their own)
+    elif st.session_state["stage1_step"] == 2:
+        st.subheader("Step 2: Choose or Define Your Sub-Domain Focus")
+        if "stage1_subdomains" in st.session_state:
+            st.info(st.session_state["stage1_subdomains"])
+        
+        st.markdown("**Select from supervisor suggestions or independently type your preferred focus:**")
+        sub_domain_input = st.text_input(
+            "Your chosen sub-domain / angle:",
+            value=st.session_state["student_profile"]["sub_domain"],
+            placeholder="e.g., Type one of the supervisor's 3 suggestions or write your own custom focus area"
+        )
+        
+        col_b1, col_n1 = st.columns([1, 4])
+        with col_b1:
+            if st.button("← Back to Step 1"):
+                st.session_state["stage1_step"] = 1
+                st.rerun()
+        with col_n1:
+            if st.button("Proceed to Formulate Research Question"):
+                if not sub_domain_input.strip():
+                    st.warning("Please enter or select a sub-domain focus.")
+                else:
+                    st.session_state["student_profile"]["sub_domain"] = sub_domain_input
+                    st.session_state["stage1_step"] = 3
+                    st.rerun()
+
+    # STEP 3: Draft and Refine Research Question
+    elif st.session_state["stage1_step"] == 3:
+        st.subheader("Step 3: Formulate Your Research Question")
+        st.caption(f"**Original Observation:** {st.session_state['student_profile']['observation']}")
+        st.caption(f"**Selected Focus Area:** {st.session_state['student_profile']['sub_domain']}")
+        
+        proposed_rq = st.text_area(
+            "Write your research question here:",
+            value=st.session_state["student_profile"]["research_topic"],
+            placeholder="e.g., To what extent can Article 9 be invoked under Article 199 to compel statutory enforcement of air pollution limits in Punjab?"
+        )
+        
+        col_b2, col_sub = st.columns([1, 4])
+        with col_b2:
+            if st.button("← Back to Step 2"):
+                st.session_state["stage1_step"] = 2
+                st.rerun()
+        with col_sub:
+            if st.button("Get Supervisor Feedback & Save Topic", type="primary"):
+                if not is_configured:
+                    st.error("API key missing.")
+                elif not proposed_rq.strip():
+                    st.warning("Please type a research question.")
+                else:
+                    st.session_state["student_profile"]["research_topic"] = proposed_rq
+                    supervisor = get_socratic_supervisor_agent(llm)
+                    task = Task(
+                        description=(
+                            f"Proposed Research Question: {proposed_rq}\n"
+                            f"Observation Context: {st.session_state['student_profile']['observation']}\n"
+                            f"Focus Area: {st.session_state['student_profile']['sub_domain']}\n"
+                            "Provide feedback on whether this research question is specific, manageable, and actionable. "
+                            "Give 2 specific recommendations to polish it further."
+                        ),
+                        expected_output="Constructive evaluation of the research question with actionable improvement suggestions.",
+                        agent=supervisor
+                    )
+                    run_crew(supervisor, task)
+                    st.success("✅ Topic saved to your Student Profile! You can now navigate freely to Stage 2 (Methodology) or any other tab.")
 
 # -----------------------------------------------------------------------------
 # TAB 2: Methodology & Research Gap
@@ -337,13 +419,15 @@ with tab_p2:
     )
     
     research_question = st.text_input(
-        "Enter your research question (from Stage 1):",
+        "Enter your research question (auto-filled from Stage 1):",
         value=st.session_state["student_profile"]["research_topic"]
     )
     
     if st.button("Generate Paragraph-by-Paragraph Methodology Guide", key="btn_p2"):
         if not is_configured:
             st.error("API key missing.")
+        elif not research_question.strip():
+            st.warning("Please enter a research question or set it in Stage 1.")
         else:
             advisor = get_methodology_advisor_agent(llm)
             task = Task(
