@@ -10,21 +10,29 @@ st.set_page_config(page_title="ResearchMentor AI", layout="wide")
 st.markdown(
     """
     <style>
-    /* 1. Fix navigation tab text colors (Observation & Topic, Methodology & Gap) */
-    button[data-baseweb="tab"] p {
-        color: #1F2937 !important;
+    /* 1. Sidebar headers, text, and labels automatically adapt to theme */
+    [data-testid="stSidebar"] *, 
+    [data-testid="stSidebar"] label,
+    [data-testid="stSidebar"] p,
+    [data-testid="stSidebar"] span,
+    [data-testid="stSidebar"] h1,
+    [data-testid="stSidebar"] h2,
+    [data-testid="stSidebar"] h3 {
+        color: var(--text-color) !important;
+    }
+
+    /* 2. Form/Widget labels (Your Name, Discipline, AI Provider, etc.) adapt dynamically */
+    div[data-testid="stWidgetLabel"] p,
+    div[data-testid="stWidgetLabel"] label {
+        color: var(--text-color) !important;
         font-weight: 600 !important;
     }
 
-    /* 2. Fix Resource Preference radio button label and option text */
+    /* 3. Navigation tabs and radio button labels adapt dynamically */
+    button[data-baseweb="tab"] p,
     div[data-testid="stRadio"] label,
     div[data-testid="stRadio"] div[role="radiogroup"] p {
-        color: #1F2937 !important;
-    }
-
-    /* 3. Ensure overall body text uses high-contrast dark color */
-    .stApp {
-        color: #1F2937 !important;
+        color: var(--text-color) !important;
     }
     </style>
     """,
