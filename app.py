@@ -3,6 +3,36 @@ from pathlib import Path
 
 import streamlit as st
 
+# 1. Page config (if you have one)
+st.set_page_config(page_title="ResearchMentor AI", layout="wide")
+
+# 2. Paste the CSS block here
+st.markdown(
+    """
+    <style>
+    /* 1. Fix navigation tab text colors (Observation & Topic, Methodology & Gap) */
+    button[data-baseweb="tab"] p {
+        color: #1F2937 !important;
+        font-weight: 600 !important;
+    }
+
+    /* 2. Fix Resource Preference radio button label and option text */
+    div[data-testid="stRadio"] label,
+    div[data-testid="stRadio"] div[role="radiogroup"] p {
+        color: #1F2937 !important;
+    }
+
+    /* 3. Ensure overall body text uses high-contrast dark color */
+    .stApp {
+        color: #1F2937 !important;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+# 3. Rest of your app code follows below...
+
 # ---------------------------------------------------------------------------
 # Startup check: make sure every project file is in the right folder.
 # ---------------------------------------------------------------------------
